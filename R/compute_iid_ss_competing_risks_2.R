@@ -45,7 +45,10 @@ compute_iid_decomposition_survival<-function(t,n,cause,F01t,St,weights,T,delta,m
   nb_Cases<-sum(T< t & delta==cause)
   nb_Controls_1<-sum(T> t )
   # To save computation time, we loop only on control 1 for Mathtij1 
-  Mat_data_cont1<-Mat_data[which_Controls_1,]
+  # If which_Controls_l only has one number, Mat_data_cont1<-Mat_data[which_Controls_1,] will be dropped into numeric
+  # so set drop = F 
+  Mat_data_cont1<-Mat_data[which_Controls_1,,drop = F]
+  # 
   # initialise  Mathtij1  with its right size !
   Mathtij1<-matrix(NA,nb_Controls_1,nb_Cases)
   # loop on all cases i. We loop only on Cases to save computation time !  

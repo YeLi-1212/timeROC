@@ -47,16 +47,27 @@ compute_iid_decomposition_survival<-function(t,n,cause,F01t,St,weights,T,delta,m
   # To save computation time, we loop only on control 1 for Mathtij1 
   # If which_Controls_l only has one number, Mat_data_cont1<-Mat_data[which_Controls_1,] will be dropped into numeric
   # so set drop = F 
+  # i just find this modification is not enough, so i change the instructions of the next for() loop 
   Mat_data_cont1<-Mat_data[which_Controls_1,,drop = F]
   # 
   # initialise  Mathtij1  with its right size !
   Mathtij1<-matrix(NA,nb_Controls_1,nb_Cases)
   # loop on all cases i. We loop only on Cases to save computation time !  
   for (i in which_Cases){
+    # if there is only one row in Mat_data_cont1 , we should split Mat_data_cont1[,c("T","marker")] into seperate operations
+    # on "T" and "marker"
+    if(length(which_Controls_1) == 1){
+        W1<-cbind(Mat_data_cont1[,c("T")],Mat_data_cont1[,c("marker")],
+              rep(Mat_data[i,c("Weights_cases")],nb_Controls_1),
+              rep(Mat_data[i,c("marker")],nb_Controls_1),
+              Mat_data_cont1[,c("Weights_controls_1")])
+    }
+    else{
     W1<-cbind(Mat_data_cont1[,c("T","marker")],
               rep(Mat_data[i,c("Weights_cases")],nb_Controls_1),
               rep(Mat_data[i,c("marker")],nb_Controls_1),
               Mat_data_cont1[,c("Weights_controls_1")])
+    }
     # fill the column i of  Mathtij1 and  Mathtij2
     Mathtij1[,which(i==which_Cases)]<-htij1(W1) 
   }
